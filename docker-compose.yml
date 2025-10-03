@@ -1,12 +1,12 @@
 version: "3.1"
 
 services:
-  odoo:
+  hso-web:
     image: odoo:19.0
-    container_name: hso_lubricant
+    container_name: hso_web
     restart: unless-stopped
     depends_on:
-      - db
+      - hsodb
     ports:
       - "8079:8069"                      # <- puerto externo distinto al primer stack
     volumes:
@@ -14,20 +14,19 @@ services:
       - ./config2:/etc/odoo              # opcional: odoo.conf propio
       - ./addons2:/mnt/extra-addons      # módulos propios de esta instancia
     environment:
-      - HOST=db
+      - HOST=hsodb
       - USER=odoo
       - PASSWORD=${ODOO_DB_PASSWORD:-odoo}
-    # Arranca sin crear base para mostrar el gestor
     command: >
       odoo
-      --db_host=db --db_port=5432
+      --db_host=hsodb --db_port=5432
       --db_user=odoo --db_password=${ODOO_DB_PASSWORD:-odoo}
       --db-filter=.*
       --logfile=/var/log/odoo/odoo.log
 
-  db:
+  hsodb:
     image: postgres:16.0
-    container_name: db2
+    container_name: hsodb2
     restart: unless-stopped
     environment:
       - POSTGRES_DB=postgres             # evita pre-crear una BD "odoo" vacía
