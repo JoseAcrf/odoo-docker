@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: odoo
+    container_name: test
     depends_on:
       - db
       - redis
@@ -30,7 +30,7 @@ services:
     image: postgres:15
     container_name: postgres
     environment:
-      POSTGRES_DB: odoo
+      POSTGRES_DB: odoo2
       POSTGRES_USER: odoo
       POSTGRES_PASSWORD: odoo
     volumes:
