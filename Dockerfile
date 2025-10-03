@@ -33,10 +33,31 @@ RUN apt-get update && apt-get install -y \
 # Instalar LESS para frontend
 RUN npm install -g less less-plugin-clean-css
 
-# Instalar wkhtmltopdf desde paquete oficial
-RUN curl -L -o wkhtmltox.deb https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.6/wkhtmltox_0.12.6-1.buster_amd64.deb \
-    && apt-get install -y ./wkhtmltox.deb \
-    && rm wkhtmltox.deb
+# Install rtlcss
+RUN npm install -g rtlcss
+
+# Install wkhtmltopdf
+ARG TARGETARCH
+ARG WKHTMLTOPDF_VERSION=0.12.6.1
+ARG WKHTMLTOPDF_AMD64_CHECKSUM="98ba0d157b50d36f23bd0dedf4c0aa28c7b0c50fcdcdc54aa5b6bbba81a3941d"
+ARG WKHTMLTOPDF_ARM64_CHECKSUM="b6606157b27c13e044d0abbe670301f88de4e1782afca4f9c06a5817f3e03a9c"
+ARG WKHTMLTOPDF_URL="https://github.com/wkhtmltopdf/packaging/releases/download/${WKHTMLTOPDF_VERSION}-3/wkhtmltox_${WKHTMLTOPDF_VERSION}-3.bookworm_${TARGETARCH}.deb"
+
+RUN if [ "$TARGETARCH" = "arm64" ]; then \
+    WKHTMLTOPDF_CHECKSUM=$WKHTMLTOPDF_ARM64_CHECKSUM; \
+    elif [ "$TARGETARCH" = "amd64" ]; then \
+    WKHTMLTOPDF_CHECKSUM=$WKHTMLTOPDF_AMD64_CHECKSUM; \
+    else \
+    echo "Unsupported architecture: $TARGETARCH" >&2; \
+    exit 1; \
+    fi \
+    && curl -SLo wkhtmltox.deb ${WKHTMLTOPDF_URL} \
+    && echo "Downloading wkhtmltopdf from: ${WKHTMLTOPDF_URL}" \
+    && echo "Expected wkhtmltox checksum: ${WKHTMLTOPDF_CHECKSUM}" \
+    && echo "Computed wkhtmltox checksum: $(sha256sum wkhtmltox.deb | awk '{ print $1 }')" \
+    && echo "${WKHTMLTOPDF_CHECKSUM} wkhtmltox.deb" | sha256sum -c - \
+    && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
+    && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
 
 # Crear usuario odoo
 RUN useradd -m -d /opt/odoo -U -r -s /bin/bash odoo
