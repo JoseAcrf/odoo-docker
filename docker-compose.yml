@@ -1,54 +1,42 @@
-version: '3.8'
+version: "3.1"
 
 services:
-
   odoo:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: test
+    image: odoo:19.0
+    container_name: hso_lubricant
+    restart: unless-stopped
     depends_on:
       - db
-      - redis
     ports:
-      - "8069:8069"
-      - "8072:8072"
+      - "8079:8069"                      # <- puerto externo distinto al primer stack
     volumes:
-      - ./addons:/mnt/extra-addons
-      - ./logs:/var/log/odoo
-      - ./config/odoo.conf:/etc/odoo/odoo.conf
+      - odoo-data-2:/var/lib/odoo
+      - ./config2:/etc/odoo              # opcional: odoo.conf propio
+      - ./addons2:/mnt/extra-addons      # módulos propios de esta instancia
     environment:
       - HOST=db
-      - PORT=5432
       - USER=odoo
-      - PASSWORD=odoo
-    networks:
-      - odoo-net
-    restart: unless-stopped
+      - PASSWORD=${ODOO_DB_PASSWORD:-odoo}
+    # Arranca sin crear base para mostrar el gestor
+    command: >
+      odoo
+      --db_host=db --db_port=5432
+      --db_user=odoo --db_password=${ODOO_DB_PASSWORD:-odoo}
+      --db-filter=.*
+      --logfile=/var/log/odoo/odoo.log
 
   db:
-    image: postgres:15
-    container_name: postgres
-    environment:
-      POSTGRES_DB: odoo2
-      POSTGRES_USER: odoo
-      POSTGRES_PASSWORD: odoo
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U odoo"]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-    networks:
-      - odoo-net
+    image: postgres:16.0
+    container_name: db2
     restart: unless-stopped
-
-networks:
-  odoo-net:
-    driver: bridge
+    environment:
+      - POSTGRES_DB=postgres             # evita pre-crear una BD "odoo" vacía
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=${ODOO_DB_PASSWORD:-odoo}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - db-data-2:/var/lib/postgresql/data
 
 volumes:
-  pgdata:
-  addons:
-  logs:
+  odoo-data-2:
+  db-data-2:
