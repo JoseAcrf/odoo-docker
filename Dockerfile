@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.10-slim-bookworm AS base
 
 # Evitar prompts interactivos
 ENV DEBIAN_FRONTEND=noninteractive
