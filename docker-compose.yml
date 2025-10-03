@@ -44,49 +44,6 @@ services:
       - odoo-net
     restart: unless-stopped
 
-  redis:
-    image: redis:alpine
-    container_name: redis
-    networks:
-      - odoo-net
-    restart: unless-stopped
-
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor
-    container_name: cadvisor
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-    ports:
-      - "8080:8080"
-    networks:
-      - odoo-net
-    restart: unless-stopped
-
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
-    networks:
-      - odoo-net
-    restart: unless-stopped
-
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    volumes:
-      - ./monitoring/grafana:/etc/grafana/provisioning
-    ports:
-      - "3000:3000"
-    networks:
-      - odoo-net
-    restart: unless-stopped
-
 networks:
   odoo-net:
     driver: bridge
