@@ -8,7 +8,8 @@ services:
     depends_on:
       - hsodb
     ports:
-      - "8019:8022"                      # <- puerto externo distinto al primer stack
+      - "8019:8069"   # puerto web
+      - "8020:8072"   # opcional: longpolling, para notificaciones/chat
     volumes:
       - odoo-data-2:/var/lib/odoo
       - ./config2:/etc/odoo              # opcional: odoo.conf propio
