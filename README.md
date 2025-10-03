@@ -1,51 +1,29 @@
-Configuración de Contenedores para Odoo 18 y PostgreSQL
-Este repositorio contiene la configuración para levantar contenedores de Odoo 18 y PostgreSQL usando Docker. Sigue las instrucciones a continuación para configurar el entorno y ejecutar los contenedores.
+# Odoo 19 Dockerizado para Producción
 
-Requisitos
-Para ejecutar los contenedores, asegúrate de tener instalados los siguientes programas:
+Entorno modular y seguro para desplegar Odoo 19 con monitoreo completo, persistencia, y configuración multi-worker.
 
-Docker: Herramienta para ejecutar contenedores. Descárgala e instálala desde Docker.
-Docker Compose: Herramienta para definir y ejecutar aplicaciones multicontenedor. En la mayoría de instalaciones modernas, Docker Compose viene incluido con Docker Desktop, pero también se puede instalar por separado si usas Docker en Linux.
-Instalación de Docker y Docker Compose
-En Windows o macOS
-Descarga Docker Desktop desde la página oficial de Docker: Docker Desktop.
-Sigue las instrucciones de instalación en la página de Docker. Asegúrate de habilitar Docker Compose durante la instalación.
-En Linux
-Ejecuta los siguientes comandos en la terminal para instalar Docker:
-sudo apt update
-sudo apt install docker.io -y
-docker --version
-Instala Docker Compose:
-sudo apt install docker-compose -y
-docker-compose --version
-Asegúrate de que el servicio Docker esté activo:
-sudo systemctl start docker
-sudo systemctl enable docker
-sudo systemctl status docker
-Uso
-1. Clona el Repositorio
-Clona este repositorio en tu máquina local e ingresa a la carpeta del proyecto:
+## 📦 Servicios
+- Odoo 19
+- PostgreSQL 15
+- Redis
+- Prometheus + cAdvisor
+- Grafana
+- NGINX externo
 
-git clone https://github.com/vjmoreno/odoo-18-docker
-cd odoo-18-docker
-2. Levanta los Contenedores
-Para iniciar los contenedores de Odoo y PostgreSQL, ejecuta:
+## 📁 Estructura
+Ver `docker-compose.yml`, `Dockerfile`, `config/`, `monitoring/`, `addons/`.
 
-./run.sh
-Esto iniciará los contenedores en segundo plano.
+## 🛡 Seguridad
+- Redis y PostgreSQL en red interna
+- `.env` para credenciales
+- `.gitignore` excluye secretos y logs
 
-3. Acceso a Odoo
-Una vez que los contenedores estén levantados, puedes acceder a Odoo desde tu navegador web en la siguiente dirección:
+## 📊 Monitoreo
+- Dashboards automáticos en Grafana
+- Métricas de contenedores y PostgreSQL
 
-http://localhost:8069
-4. Dar de baja los contenedores
-docker-compose down
-Esto eliminará los contenedores de Odoo y PostgreSQL, pero conservará la base de datos, configuraciones de Odoo, módulos y logs.
+## ✅ Checklist
+Ver sección de verificación pre-producción en documentación técnica.
 
-Solución de Problemas Comunes
-Permisos de Docker en Linux: Si recibes un error de permisos al ejecutar Docker, intenta agregar tu usuario al grupo docker:
-
-sudo usermod -aG docker $USER
-Luego cierra sesión y vuelve a iniciar sesión para que los cambios surtan efecto.
-
-Problemas con el puerto 8069: Si el puerto 8069 está en uso, puedes cambiarlo en el archivo docker-compose.yml.
+## 📄 Licencia
+MIT – libre uso y modificación.
